@@ -1,0 +1,32 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  /* background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+
+  max-width: 40%;
+  width: 100%;
+  margin: 0 auto;
+
+  border-radius: 5px;
+
+  .title {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .fields {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 50px;
+  }
+
+  .profile_img{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   margin-bottom: 15px;
+   cursor: pointer;
+  }
+}
