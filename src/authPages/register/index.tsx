@@ -1,10 +1,4 @@
-import {
-  Avatar,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { useState } from "react";
 import { FormInput } from "../../components/UI/FormInput";
 import { FormPassword } from "../../components/UI/FormPassword";
@@ -12,11 +6,9 @@ import { object, string, TypeOf } from "zod";
 import s from "../authStyle.module.scss";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const registerSchema = object({
     name: string()
       .nonempty("Поле обязательно для заполнения")
@@ -49,14 +41,6 @@ export const Register = () => {
       setLoading(false);
       console.log(data);
     }, 2000);
-  };
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
   };
 
   return (
@@ -94,25 +78,13 @@ export const Register = () => {
             sx={{ marginBottom: 1 }}
           />
 
-          <TextField
-            id="input-with-icon-textfield"
-            label="password"
-            type={showPassword ? "text" : "password"}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" sx={{ margin: 0 }}>
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    sx={{ right: 0, position: "absolute" }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+          <FormPassword
+            name="password"
+            label="Пароль"
+            size="small"
+            margin="dense"
             variant="filled"
+            sx={{ marginBottom: 1 }}
           />
           <button type="submit">check here</button>
         </form>
