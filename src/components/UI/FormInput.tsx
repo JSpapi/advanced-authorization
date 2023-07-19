@@ -6,7 +6,7 @@ type Props = {
   name: string;
 } & TextFieldProps;
 
-export const FormInput = ({ name, ...otherprops }: Props) => {
+export const FormInput = ({ name, ...otherProps }: Props) => {
   const {
     control,
     formState: { errors },
@@ -19,7 +19,7 @@ export const FormInput = ({ name, ...otherprops }: Props) => {
       defaultValue=""
       render={({ field }) => (
         <TextField
-          {...otherprops}
+          {...otherProps}
           {...field}
           error={!!errors[name]?.message}
           helperText={errors[name] ? errors[name]?.message : null}
