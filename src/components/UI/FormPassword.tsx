@@ -33,7 +33,7 @@ export const FormPassword = ({ name, ...otherProps }: Props) => {
       defaultValue=""
       render={({ field }) => (
         <TextField
-          id="input-with-icon-textfield"
+          // id="input-with-icon-textfield"
           type={showPassword ? "text" : "password"}
           {...otherProps}
           {...field}
