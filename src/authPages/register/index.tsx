@@ -46,7 +46,7 @@ export const Register = () => {
   };
 
   return (
-    <div className={s.form}>
+    <div className={[s.form, s.register].join(" ")}>
       <Typography variant="h5" className={s.title}>
         Зарегестрироваться
       </Typography>
