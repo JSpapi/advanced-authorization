@@ -1,11 +1,12 @@
-import { Avatar, Typography } from "@mui/material";
 import { useState } from "react";
-import { FormInput } from "../../components/UI/FormInput";
-import { FormPassword } from "../../components/UI/FormPassword";
+import { Avatar, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { object, string, TypeOf } from "zod";
-import s from "../authStyle.module.scss";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FormPassword } from "../../components/UI/FormPassword";
+import { FormInput } from "../../components/UI/FormInput";
+import s from "../authStyle.module.scss";
 export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -36,6 +37,7 @@ export const Register = () => {
   const { handleSubmit, reset } = methods;
 
   const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
+    reset();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -86,7 +88,22 @@ export const Register = () => {
             variant="filled"
             sx={{ marginBottom: 1 }}
           />
-          <button type="submit">check here</button>
+          <FormPassword
+            name="passwordConfirm"
+            label="Повторите пароль"
+            size="small"
+            margin="dense"
+            variant="filled"
+            sx={{ marginBottom: 2 }}
+          />
+          <LoadingButton
+            size="large"
+            loading={loading}
+            variant="contained"
+            type="submit"
+          >
+            <span className="regular">Зарегестрироваться</span>
+          </LoadingButton>
         </form>
       </FormProvider>
     </div>
