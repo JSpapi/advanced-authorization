@@ -4,7 +4,8 @@ import { ToastContainer } from "react-toastify";
 import { Home } from "./pages/home";
 import { routes } from "./routes";
 import "react-toastify/dist/ReactToastify.css";
-import { Header } from "./components/header";
+
+import { Sharedlayout } from "./components/layout/Sharedlayout";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -21,10 +22,11 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <>
         <Container maxWidth="lg">
-          <Header />
           <Routes>
-            <Route path="/" element={<Home />} />
-            {setRoutes()}
+            <Route path="/" element={<Sharedlayout />}>
+              <Route index element={<Home />} />
+              {setRoutes()}
+            </Route>
           </Routes>
         </Container>
         <ToastContainer />

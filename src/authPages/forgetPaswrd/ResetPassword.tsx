@@ -1,31 +1,27 @@
-import { useState } from "react";
-import { Avatar, Typography } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { object, string, TypeOf } from "zod";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@mui/lab";
+import { Avatar, Typography } from "@mui/material";
+import { useState } from "react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { object, string, TypeOf } from "zod";
 import { FormPassword } from "../../components/UI/FormPassword";
-import { FormInput } from "../../components/UI/FormInput";
+import passwordImg from "../../assets/password.png";
+
 import s from "../authStyle.module.scss";
-import { Link } from "react-router-dom";
-export const Register = () => {
+
+export const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const registerSchema = object({
-    name: string()
-      .trim()
-      .nonempty("Поле обязательно для заполнения")
-      .min(2, "Имя должно состоять не меньше 2 символов")
-      .max(32, "Имя должно состоять не больше 32 символов"),
-    email: string()
-      .trim()
-      .nonempty("Поле обязательно для заполнения")
-      .email("электронная почта недействительна"),
+
+  const navigate = useNavigate();
+
+  const loginSchema = object({
     password: string()
       .trim()
       .nonempty("Поле обязательно для заполнения")
       .min(4, "Имя должно состоять не меньше 2 символов")
-      .max(32, "Имя должно состоять не больше 32 символов"),
+      .max(32, "Имя должно состоять не больше 32 сим  волов"),
     passwordConfirm: string()
       .trim()
       .nonempty("Пожалуйста, подтвердите свой пароль"),
@@ -34,10 +30,10 @@ export const Register = () => {
     message: "Пароли не совпадают",
   });
 
-  type RegisterInput = TypeOf<typeof registerSchema>;
+  type RegisterInput = TypeOf<typeof loginSchema>;
 
   const methods = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(loginSchema),
   });
 
   const { handleSubmit, reset } = methods;
@@ -49,42 +45,21 @@ export const Register = () => {
       setLoading(false);
       console.log(data);
     }, 2000);
+    navigate("/login");
   };
-
   return (
-    <div className={[s.form, s.register].join(" ")}>
+    <div className={[s.form, s.login].join(" ")}>
       <Typography variant="h5" className={s.title}>
-        Зарегестрироваться
+        Сбросить пароль
       </Typography>
       <FormProvider {...methods}>
         <form className={s.fields} onSubmit={handleSubmit(onFormSubmit)}>
           <div className={s.profile_img}>
-            <Avatar
-              alt=""
-              src="/broken-image.jpg"
-              sx={{ width: 90, height: 90 }}
-            />
-            <Typography variant="body2" sx={{ margin: "10px 0px" }}>
-              Нажмите на аватар что бы поменять
+            <Avatar alt="" src={passwordImg} sx={{ width: 90, height: 90 }} />
+            <Typography variant="h6" sx={{ textAlign: "center" }}>
+              Введите новый пароль
             </Typography>
           </div>
-
-          <FormInput
-            name="email"
-            label="Email"
-            size="small"
-            margin="dense"
-            variant="filled"
-            sx={{ marginBottom: 1 }}
-          />
-          <FormInput
-            name="name"
-            label="Имя"
-            size="small"
-            margin="dense"
-            variant="filled"
-            sx={{ marginBottom: 1 }}
-          />
 
           <FormPassword
             name="password"
@@ -110,13 +85,16 @@ export const Register = () => {
             type="submit"
             sx={{ marginBottom: 1 }}
           >
-            <span className="regular">Зарегестрироваться</span>
+            <span className="regular">Сбросить</span>
           </LoadingButton>
-
           <Typography variant="caption">
-            Уже зарегистрированы?
-            <Link to="/login" className={s.form_link} state="Войти">
-              Войдите
+            Нет аккаунта?
+            <Link
+              to="/register"
+              className={s.form_link}
+              state="Зарегестрироваться"
+            >
+              Зарегестрируйтесь
             </Link>
           </Typography>
         </form>
