@@ -1,27 +1,25 @@
-import { useState } from "react";
-import { Typography } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@mui/lab";
+import { Typography } from "@mui/material";
+import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { object, string, TypeOf } from "zod";
 import { FormInput } from "../../components/UI/FormInput";
-import { FormPassword } from "../../components/UI/FormPassword";
-import { Link } from "react-router-dom";
+
 import s from "../authStyle.module.scss";
 
-export const Login = () => {
+export const ConfirmOTPCode = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
+
   const loginSchema = object({
-    email: string()
+    otpCode: string()
       .trim()
       .nonempty("Поле обязательно для заполнения")
-      .email("электронная почта недействительна"),
-    password: string()
-      .trim()
-      .nonempty("Поле обязательно для заполнения")
-      .min(4, "Имя должно состоять не меньше 2 символов")
-      .max(32, "Имя должно состоять не больше 32 символов"),
+      .min(6, "Код должен состоять не меньше 6 чисел"),
   });
 
   type RegisterInput = TypeOf<typeof loginSchema>;
@@ -39,35 +37,24 @@ export const Login = () => {
       setLoading(false);
       console.log(data);
     }, 2000);
+    navigate("/resetPassword");
   };
-
   return (
     <div className={[s.form, s.login].join(" ")}>
       <Typography variant="h5" className={s.title}>
-        Войти
+        Подтверждение
       </Typography>
       <FormProvider {...methods}>
         <form className={s.fields} onSubmit={handleSubmit(onFormSubmit)}>
           <FormInput
-            name="email"
-            label="Email"
+            name="otpCode"
+            label="OTP код"
+            type="number"
             size="small"
             margin="dense"
             variant="filled"
             sx={{ marginBottom: 1 }}
           />
-
-          <FormPassword
-            name="password"
-            label="Пароль"
-            size="small"
-            margin="dense"
-            variant="filled"
-            sx={{ marginBottom: 1 }}
-          />
-          <Link to="/confirmEmail" style={{ marginBottom: 15 }}>
-            Забыли пароль?
-          </Link>
 
           <LoadingButton
             size="large"
@@ -76,17 +63,13 @@ export const Login = () => {
             type="submit"
             sx={{ marginBottom: 1 }}
           >
-            <span className="regular">Войти</span>
+            <span className="regular">Подтвердить</span>
           </LoadingButton>
           <Typography variant="caption">
-            Нет аккаунта?
-            <Link
-              to="/register"
-              className={s.form_link}
-              state="Зарегестрироваться"
-            >
-              Зарегестрируйтесь
-            </Link>
+            Не получили код?
+            <button className={s.form_link} type="button">
+              Отправить код повторно
+            </button>
           </Typography>
         </form>
       </FormProvider>
