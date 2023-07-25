@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Avatar, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { object, string, TypeOf } from "zod";
@@ -8,24 +8,28 @@ import { FormPassword } from "../../components/UI/FormPassword";
 import { FormInput } from "../../components/UI/FormInput";
 import s from "../authStyle.module.scss";
 import { Link } from "react-router-dom";
+import { convertToBase } from "../../utils/convert";
+
 export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [imgFile, setImgFile] = useState("");
+
   const registerSchema = object({
     name: string()
       .trim()
-      .nonempty("Поле обязательно для заполнения")
+      .nonempty("Поле обязательно к заполнения")
       .min(2, "Имя должно состоять не меньше 2 символов")
       .max(32, "Имя должно состоять не больше 32 символов"),
     email: string()
       .trim()
-      .nonempty("Поле обязательно для заполнения")
+      .nonempty("Поле обязательно к заполнения")
       .email("электронная почта недействительна"),
     password: string()
       .trim()
-      .nonempty("Поле обязательно для заполнения")
-      .min(4, "Имя должно состоять не меньше 2 символов")
-      .max(32, "Имя должно состоять не больше 32 символов"),
+      .nonempty("Поле обязательно к заполнения")
+      .min(4, "Пароль должен состоять не меньше 2 символов")
+      .max(32, "Пароль должен состоять не больше 32 символов"),
     passwordConfirm: string()
       .trim()
       .nonempty("Пожалуйста, подтвердите свой пароль"),
@@ -43,12 +47,22 @@ export const Register = () => {
   const { handleSubmit, reset } = methods;
 
   const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
+    // const formData = new FormData();
+    // formData.append('picture', data.)
+
     reset();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      console.log(data);
+      const check = Object.assign(data, { profile: imgFile });
+      console.log(check);
     }, 2000);
+  };
+
+  const uploadImg = async (e: ChangeEvent<HTMLInputElement>) => {
+    const base64 = await convertToBase(e.target.files[0]);
+
+    setImgFile(base64);
   };
 
   return (
@@ -59,10 +73,20 @@ export const Register = () => {
       <FormProvider {...methods}>
         <form className={s.fields} onSubmit={handleSubmit(onFormSubmit)}>
           <div className={s.profile_img}>
-            <Avatar
-              alt=""
-              src="/broken-image.jpg"
-              sx={{ width: 90, height: 90 }}
+            <label htmlFor="profile">
+              <Avatar
+                alt="Avatar"
+                src={imgFile || "/broken-image.jpg"}
+                sx={{ width: 90, height: 90 }}
+              />
+            </label>
+
+            <input
+              type="file"
+              id="profile"
+              name="profile"
+              onChange={uploadImg}
+              accept="image/*"
             />
             <Typography variant="body2" sx={{ margin: "10px 0px" }}>
               Нажмите на аватар что бы поменять
