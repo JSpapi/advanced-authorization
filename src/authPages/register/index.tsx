@@ -9,14 +9,17 @@ import { FormInput } from "../../components/UI/FormInput";
 import s from "../authStyle.module.scss";
 import { Link } from "react-router-dom";
 import { convertToBase } from "../../utils/convert";
+import { useRegisterMutation } from "../../services/auth.api";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [imgFile, setImgFile] = useState("");
 
+  const [registerUser] = useRegisterMutation();
+
   const registerSchema = object({
-    name: string()
+    username: string()
       .trim()
       .nonempty("Поле обязательно к заполнения")
       .min(2, "Имя должно состоять не меньше 2 символов")
@@ -46,17 +49,22 @@ export const Register = () => {
 
   const { handleSubmit, reset } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
+  const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
     // const formData = new FormData();
     // formData.append('picture', data.)
-
-    reset();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      const check = Object.assign(data, { profile: imgFile });
-      console.log(check);
-    }, 2000);
+    try {
+      reset();
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      const { passwordConfirm, ...rest } = Object.assign(data, {
+        profile: imgFile,
+      });
+      await registerUser(rest).unwrap();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const uploadImg = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -102,7 +110,7 @@ export const Register = () => {
             sx={{ marginBottom: 1 }}
           />
           <FormInput
-            name="name"
+            name="username"
             label="Имя"
             size="small"
             margin="dense"
