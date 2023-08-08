@@ -6,6 +6,7 @@ import { routes } from "./routes";
 import "react-toastify/dist/ReactToastify.css";
 
 import { Sharedlayout } from "./components/layout/Sharedlayout";
+import { AuthLoading } from "./authPages/AuthLoading";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -20,17 +21,19 @@ function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <>
-        <Container maxWidth="lg">
-          <Routes>
-            <Route path="/" element={<Sharedlayout />}>
-              <Route index element={<Home />} />
-              {setRoutes()}
-            </Route>
-          </Routes>
-        </Container>
-        <ToastContainer />
-      </>
+      <AuthLoading>
+        <>
+          <Container maxWidth="lg">
+            <Routes>
+              <Route path="/" element={<Sharedlayout />}>
+                <Route index element={<Home />} />
+                {setRoutes()}
+              </Route>
+            </Routes>
+          </Container>
+          <ToastContainer />
+        </>
+      </AuthLoading>
     </ThemeProvider>
   );
 }
