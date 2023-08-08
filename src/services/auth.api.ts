@@ -1,9 +1,10 @@
 import { api } from "./api";
 import { IUser, UserData } from "../types/user.type";
 
-type ResponseLoginData = Omit<IUser, "password"> & { token: string };
+export type ResponseLoginData = Omit<IUser, "password"> & { token: string };
 
 type LoginData = Pick<UserData, "email" | "password">;
+
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<ResponseLoginData, UserData>({
