@@ -9,11 +9,17 @@ import { FormInput } from "../../components/UI/FormInput";
 import s from "../authStyle.module.scss";
 import { Link } from "react-router-dom";
 import { convertToBase } from "../../utils/convert";
-import { useRegisterMutation } from "../../services/auth.api";
+import {
+  ResponseLoginData,
+  useRegisterMutation,
+} from "../../services/auth.api";
+import { toast } from "react-toastify";
+import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
+import { ErrorMessage } from "../../components/UI/ErrorMessage";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [imgFile, setImgFile] = useState("");
 
   const [registerUser] = useRegisterMutation();
@@ -53,7 +59,6 @@ export const Register = () => {
     // const formData = new FormData();
     // formData.append('picture', data.)
     try {
-      reset();
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
@@ -62,8 +67,20 @@ export const Register = () => {
         profile: imgFile,
       });
       await registerUser(rest).unwrap();
+
+      await toast.promise(registerUser, {
+        pending: "Promise is pending",
+        success: "Promise resolved 👌",
+        error: "Promise rejected 🤯",
+      });
+
+      reset();
     } catch (err) {
       console.log(err);
+      const maybeError = isErrorWithMessage(err);
+      if (maybeError) setError(err.data.message);
+      else setError("Не известная ошибка");
+      reset();
     }
   };
 
@@ -71,6 +88,7 @@ export const Register = () => {
     const base64 = await convertToBase(e.target.files[0]);
 
     setImgFile(base64);
+    console.log(base64);
   };
 
   return (
@@ -151,6 +169,7 @@ export const Register = () => {
               Войдите
             </Link>
           </Typography>
+          <ErrorMessage message={error} />
         </form>
       </FormProvider>
     </div>
