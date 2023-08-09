@@ -6,12 +6,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { FormInput } from "../../components/UI/FormInput";
 import { FormPassword } from "../../components/UI/FormPassword";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import s from "../authStyle.module.scss";
+import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
+import { useLoginMutation } from "../../services/auth.api";
+import { ErrorMessage } from "../../components/UI/ErrorMessage";
 
 export const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const [loginUser] = useLoginMutation();
+
   const loginSchema = object({
     email: string()
       .trim()
@@ -30,15 +37,22 @@ export const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, resetField } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
-    reset();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log(data);
-    }, 2000);
+  const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
+    try {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      await loginUser(data).unwrap();
+      reset();
+      navigate("/");
+    } catch (err) {
+      const maybeError = isErrorWithMessage(err);
+      if (maybeError) setError(err.data.message);
+      resetField("password");
+    }
   };
 
   return (
@@ -88,6 +102,7 @@ export const Login = () => {
               Зарегестрируйтесь
             </Link>
           </Typography>
+          <ErrorMessage message={error} />
         </form>
       </FormProvider>
     </div>
