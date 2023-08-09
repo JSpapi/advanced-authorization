@@ -67,6 +67,7 @@ export const Register = () => {
         profile: imgFile,
       });
       await registerUser(rest).unwrap();
+   
 
       await toast.promise(registerUser, {
         pending: "Promise is pending",
