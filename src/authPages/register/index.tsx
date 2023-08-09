@@ -7,12 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormPassword } from "../../components/UI/FormPassword";
 import { FormInput } from "../../components/UI/FormInput";
 import s from "../authStyle.module.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { convertToBase } from "../../utils/convert";
-import {
-  ResponseLoginData,
-  useRegisterMutation,
-} from "../../services/auth.api";
+import { useRegisterMutation } from "../../services/auth.api";
 import { toast } from "react-toastify";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
@@ -21,6 +18,7 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imgFile, setImgFile] = useState("");
+  const navigate = useNavigate();
 
   const [registerUser] = useRegisterMutation();
 
@@ -58,6 +56,8 @@ export const Register = () => {
   const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
     // const formData = new FormData();
     // formData.append('picture', data.)
+
+    // !СОЗДАТЬ ПРОТЕКТ РОУТ
     try {
       setLoading(true);
       setTimeout(() => {
@@ -67,15 +67,15 @@ export const Register = () => {
         profile: imgFile,
       });
       await registerUser(rest).unwrap();
-   
 
       await toast.promise(registerUser, {
-        pending: "Promise is pending",
-        success: "Promise resolved 👌",
-        error: "Promise rejected 🤯",
+        pending: "Ожидаем ответ...",
+        success: "Аккаунт успешно создан 👌",
+        error: "Произошла ошибка 🤯",
       });
 
       reset();
+      navigate("/");
     } catch (err) {
       console.log(err);
       const maybeError = isErrorWithMessage(err);
