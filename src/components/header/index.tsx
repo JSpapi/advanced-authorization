@@ -22,7 +22,7 @@ export const Header = () => {
         </Button>
       </Link>
 
-      {(loc.pathname === "/login" || loc.pathname === "/") && (
+      {loc.pathname === "/login" && (
         <Link to="/register" state="Зарегестрироваться">
           <Button startIcon={<Login />} color="inherit">
             <Typography className="regular">Зарегестрироваться</Typography>
@@ -30,7 +30,7 @@ export const Header = () => {
         </Link>
       )}
 
-      {loc.pathname === "/register" && (
+      {(loc.pathname === "/register" || loc.pathname === "/") && (
         <Link to="/login" state="Войти">
           <Button startIcon={<Person />} color="inherit">
             <Typography className="regular">Войти</Typography>
