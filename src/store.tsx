@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { reducer as authReducer } from "./features/auth/auth.slice";
-import { listenerMiddleware } from "./middleware/authATokens";
+import { listenerMiddleware } from "./middleware/authTokens";
 import { api } from "./services/api";
 
 const reducers = combineReducers({
