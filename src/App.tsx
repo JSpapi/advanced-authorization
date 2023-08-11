@@ -9,6 +9,7 @@ import { Sharedlayout } from "./components/layout/Sharedlayout";
 import { AuthLoading } from "./authPages/AuthLoading";
 import { useUser } from "./hooks/useUsers";
 import { Login } from "./authPages/login";
+import { NotFound } from "./pages/notFound/NotFound";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -24,7 +25,7 @@ function App() {
         return <Route id={id} path={path} element={element} key={id} />;
       } else if (!isPrivate && !isAuthenticated) {
         return <Route id={id} path={path} element={element} key={id} />;
-      } else return false;
+      } else return <Route path="*" element={<NotFound />} />;
     });
 
   return (
