@@ -1,0 +1,13 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  padding: 20px 0;
+
+  &_left {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+  }
+}

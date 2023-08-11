@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { Sharedlayout } from "./components/layout/Sharedlayout";
 import { AuthLoading } from "./authPages/AuthLoading";
+import { useUser } from "./hooks/useUsers";
+import { Login } from "./authPages/login";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -14,10 +16,16 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const { isAuthenticated } = useUser();
+
   const setRoutes = () =>
-    routes.map(({ id, path, element }) => (
-      <Route key={id} path={path} element={element} />
-    ));
+    routes.map(({ id, path, element, isPrivate, isMenu }) => {
+      if (isPrivate && isAuthenticated && isMenu) {
+        return <Route id={id} path={path} element={element} key={id} />;
+      } else if (!isPrivate && !isAuthenticated) {
+        return <Route id={id} path={path} element={element} key={id} />;
+      } else return false;
+    });
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -26,7 +34,11 @@ function App() {
           <Container maxWidth="lg">
             <Routes>
               <Route path="/" element={<Sharedlayout />}>
-                <Route index element={<Home />} />
+                {isAuthenticated ? (
+                  <Route index element={<Home />} />
+                ) : (
+                  <Route index element={<Login />} />
+                )}
                 {setRoutes()}
               </Route>
             </Routes>
