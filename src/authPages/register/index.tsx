@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ChangeEvent, useState } from "react";
 import { Avatar, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
@@ -9,10 +10,15 @@ import { FormInput } from "../../components/UI/FormInput";
 import s from "../authStyle.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { convertToBase } from "../../utils/convert";
-import { useRegisterMutation } from "../../services/auth.api";
+import {
+  useRegisterMutation,
+  useSendEmailMutation,
+} from "../../services/auth.api";
 import { toast } from "react-toastify";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
+import { useUser } from "../../hooks/useUsers";
+import { IEmail } from "../../types/user.type";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -20,7 +26,10 @@ export const Register = () => {
   const [imgFile, setImgFile] = useState("");
   const navigate = useNavigate();
 
-  const [registerUser] = useRegisterMutation();
+  const [registerUser, { isLoading }] = useRegisterMutation();
+  const [sendEmail] = useSendEmailMutation();
+
+  const { isAuthenticated } = useUser();
 
   const registerSchema = object({
     username: string()
@@ -57,7 +66,6 @@ export const Register = () => {
     // const formData = new FormData();
     // formData.append('picture', data.)
 
-    // !СОЗДАТЬ ПРОТЕКТ РОУТ
     try {
       setLoading(true);
       setTimeout(() => {
@@ -67,6 +75,8 @@ export const Register = () => {
         profile: imgFile,
       });
       await registerUser(rest).unwrap();
+      reset();
+      navigate("/");
 
       await toast.promise(registerUser, {
         pending: "Ожидаем ответ...",
@@ -74,8 +84,15 @@ export const Register = () => {
         error: "Произошла ошибка 🤯",
       });
 
-      reset();
-      navigate("/");
+      const { email, username } = data;
+      if (!isLoading) {
+        await sendEmail({ email, username }).unwrap();
+        await toast.promise(sendEmail, {
+          pending: "Ожидаем ответ...",
+          success: "Мы отправили на ваш Email сообщение",
+          error: "Произошла ошибка 🤯",
+        });
+      }
     } catch (err) {
       console.log(err);
       const maybeError = isErrorWithMessage(err);
@@ -89,7 +106,6 @@ export const Register = () => {
     const base64 = await convertToBase(e.target.files[0]);
 
     setImgFile(base64);
-    console.log(base64);
   };
 
   return (
