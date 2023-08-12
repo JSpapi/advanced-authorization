@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { IUser, UserData } from "../types/user.type";
+import { IEmail, IUser, UserData } from "../types/user.type";
 
 export type ResponseLoginData = Omit<IUser, "password"> & { token: string };
 
@@ -27,11 +27,22 @@ export const authApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
+    sendEmail: builder.mutation<string, IEmail>({
+      query: (emailData) => ({
+        url: "/registerEmail",
+        method: "POST",
+        body: emailData,
+      }),
+    }),
   }),
 });
 
-export const { useCurrentQuery, useRegisterMutation, useLoginMutation } =
-  authApi;
+export const {
+  useCurrentQuery,
+  useRegisterMutation,
+  useLoginMutation,
+  useSendEmailMutation,
+} = authApi;
 
 export const {
   endpoints: { login, register, current },

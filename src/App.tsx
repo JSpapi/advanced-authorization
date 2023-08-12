@@ -25,7 +25,7 @@ function App() {
         return <Route id={id} path={path} element={element} key={id} />;
       } else if (!isPrivate && !isAuthenticated) {
         return <Route id={id} path={path} element={element} key={id} />;
-      } else return <Route path="*" element={<NotFound />} />;
+      } else return <Route path="*" element={<NotFound />} key={"not-found"} />;
     });
 
   return (
@@ -44,7 +44,7 @@ function App() {
               </Route>
             </Routes>
           </Container>
-          <ToastContainer />
+          <ToastContainer theme="dark" />
         </>
       </AuthLoading>
     </ThemeProvider>

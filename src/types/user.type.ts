@@ -7,3 +7,10 @@ export interface IUser {
 }
 
 export type UserData = Omit<IUser, "id">;
+
+export interface IEmail {
+  username: string;
+  email: string;
+  text?: string;
+  subject?: string | number;
+}
