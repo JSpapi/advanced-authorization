@@ -1,6 +1,6 @@
 import { Login } from "../authPages/login";
 import { Register } from "../authPages/register";
-import { ConfirmEmail } from "../authPages/forgetPaswrd/ConfirmEmail";
+import { ConfirmEmail } from "../authPages/forgetPaswrd/ConfirmName";
 import { ConfirmOTPCode } from "../authPages/forgetPaswrd/ConfirmOTPCode";
 import { ResetPassword } from "../authPages/forgetPaswrd/ResetPassword";
 import { Profile } from "../pages/profile/Profile";
