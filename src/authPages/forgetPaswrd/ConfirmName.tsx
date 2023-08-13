@@ -6,20 +6,30 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormInput } from "../../components/UI/FormInput";
-import emailImg from "../../assets/email.png";
+import { toast } from "react-toastify";
+import pswrdImg from "../../assets/password1.png";
 
 import s from "../authStyle.module.scss";
+import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
+import { useGenerateOtpQuery } from "../../services/auth.api";
+import { ErrorMessage } from "../../components/UI/ErrorMessage";
 export const ConfirmEmail = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [userName, setUserName] = useState("");
+  const [skip, setSkip] = useState(true);
+  const { data } = useGenerateOtpQuery(userName, {
+    skip,
+  });
 
   const navigate = useNavigate();
 
   const loginSchema = object({
-    email: string()
+    username: string()
       .trim()
-      .nonempty("Поле обязательно для заполнения")
-      .email("электронная почта недействительна"),
+      .nonempty("Поле обязательно к заполнения")
+      .min(2, "Имя должно состоять не меньше 2 символов")
+      .max(32, "Имя должно состоять не больше 32 символов"),
   });
 
   type RegisterInput = TypeOf<typeof loginSchema>;
@@ -30,14 +40,24 @@ export const ConfirmEmail = () => {
 
   const { handleSubmit, reset } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
-    reset();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log(data);
-    }, 2000);
-    navigate("/confirmOTPCode");
+  const onFormSubmit: SubmitHandler<RegisterInput> = (user) => {
+    try {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+
+      reset();
+
+      // navigate("/confirmOTPCode");
+      setUserName(user.username);
+      setSkip(false);
+      console.log(user);
+    } catch (err) {
+      const maybeError = isErrorWithMessage(err);
+      if (maybeError) setError(err.data.message);
+      reset();
+    }
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
@@ -47,19 +67,24 @@ export const ConfirmEmail = () => {
       <FormProvider {...methods}>
         <form className={s.fields} onSubmit={handleSubmit(onFormSubmit)}>
           <div className={s.profile_img}>
-            <Avatar alt="" src={emailImg} sx={{ width: 90, height: 90 }} />
+            <Avatar
+              alt="User"
+              src={pswrdImg}
+              sx={{ width: 90, height: 90, marginBottom: 2 }}
+            />
             <Typography variant="h6" sx={{ textAlign: "center" }}>
-              Введите ваш Email на который был зарегестрирован ваш аккаунт
+              Введите ваше Имя на который был зарегестрирован ваш аккаунт
             </Typography>
           </div>
 
           <FormInput
-            name="email"
-            label="Email"
+            name="username"
+            label="Имя"
             size="small"
             margin="dense"
             variant="filled"
             sx={{ marginBottom: 1 }}
+            autoComplete="off"
           />
 
           <LoadingButton
@@ -81,6 +106,7 @@ export const ConfirmEmail = () => {
               Зарегестрируйтесь
             </Link>
           </Typography>
+          <ErrorMessage message={error} />
         </form>
       </FormProvider>
     </div>
