@@ -17,8 +17,6 @@ import {
 import { toast } from "react-toastify";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
-import { useUser } from "../../hooks/useUsers";
-import { IEmail } from "../../types/user.type";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -28,8 +26,6 @@ export const Register = () => {
 
   const [registerUser, { isLoading }] = useRegisterMutation();
   const [sendEmail] = useSendEmailMutation();
-
-  const { isAuthenticated } = useUser();
 
   const registerSchema = object({
     username: string()
@@ -94,7 +90,6 @@ export const Register = () => {
         });
       }
     } catch (err) {
-      console.log(err);
       const maybeError = isErrorWithMessage(err);
       if (maybeError) setError(err.data.message);
       else setError("Не известная ошибка");

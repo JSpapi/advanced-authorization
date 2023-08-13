@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { IEmail, IUser, UserData } from "../types/user.type";
+import { IOtpCode } from "../types/resetPassword.type";
 
 export type ResponseLoginData = Omit<IUser, "password"> & { token: string };
 
@@ -21,17 +22,24 @@ export const authApi = api.injectEndpoints({
         body: userData,
       }),
     }),
+    sendEmail: builder.mutation<string, IEmail>({
+      query: (emailData) => ({
+        url: "/registerEmail",
+        method: "POST",
+        body: emailData,
+      }),
+    }),
     current: builder.query<ResponseLoginData, void>({
       query: () => ({
         url: "/current",
         method: "GET",
       }),
     }),
-    sendEmail: builder.mutation<string, IEmail>({
-      query: (emailData) => ({
-        url: "/registerEmail",
-        method: "POST",
-        body: emailData,
+    generateOtp: builder.query<IOtpCode, void>({
+      query: (userEmail) => ({
+        url: "/generateOTP",
+        method: "GET",
+        params: { userEmail },
       }),
     }),
   }),
@@ -42,6 +50,7 @@ export const {
   useRegisterMutation,
   useLoginMutation,
   useSendEmailMutation,
+  useGenerateOtpQuery,
 } = authApi;
 
 export const {
