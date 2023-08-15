@@ -1,3 +1,4 @@
-export interface IOtpCode{
-	code: string
+export interface IOtpCode {
+  code: string;
+  email: string;
 }
