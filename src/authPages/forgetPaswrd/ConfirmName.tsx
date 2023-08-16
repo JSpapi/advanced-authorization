@@ -1,22 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import { Avatar, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormInput } from "../../components/UI/FormInput";
-import { toast } from "react-toastify";
 import pswrdImg from "../../assets/password1.png";
 
 import s from "../authStyle.module.scss";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
-import {
-  useGenerateOtpQuery,
-  useSendEmailMutation,
-} from "../../services/auth.api";
+import { useGenerateOtpQuery } from "../../services/auth.api";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
-import { IOtpCode } from "../../types/resetPassword.type";
+import { useSendEmail } from "../../hooks/useEmail";
 export const ConfirmEmail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,25 +22,7 @@ export const ConfirmEmail = () => {
     skip,
   });
 
-  const check = async (data: IOtpCode | undefined) => {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const text = `ОТП код для восстановления аккаунт ${data?.code}. Никому не показывайте этот код!`;
-    await sendEmail({
-      username: userName,
-      email: data?.email,
-      text,
-      subject: "AK.Code - ОТП для восстановления аккаунта",
-    });
-    await toast.promise(sendEmail, {
-      pending: "Ожидаем ответ...",
-      success: "ОТП код был отправлен на ваш Email",
-      error: "Произошла ошибка 🤯",
-    });
-    navigate("/confirmOTPCode");
-  };
-
-  const [sendEmail] = useSendEmailMutation();
-  const navigate = useNavigate();
+  useSendEmail({ data, isSuccess, userName });
 
   const loginSchema = object({
     username: string()
@@ -62,13 +40,6 @@ export const ConfirmEmail = () => {
 
   const { handleSubmit, reset } = methods;
 
-  useEffect(() => {
-    if (isSuccess) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      check(data);
-    }
-  }, [isSuccess]);
-
   const onFormSubmit: SubmitHandler<RegisterInput> = (user) => {
     try {
       setLoading(true);
@@ -78,7 +49,6 @@ export const ConfirmEmail = () => {
 
       reset();
 
-      // navigate("/confirmOTPCode");
       setUserName(user.username);
       setSkip(false);
     } catch (err) {
@@ -112,7 +82,7 @@ export const ConfirmEmail = () => {
             margin="dense"
             variant="filled"
             sx={{ marginBottom: 1 }}
-            autoComplete="off"
+            // autoComplete="off"
           />
 
           <LoadingButton
