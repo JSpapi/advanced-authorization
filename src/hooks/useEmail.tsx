@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSendEmailMutation } from "../services/auth.api";
 import { IOtpCode } from "../types/resetPassword.type";
@@ -33,7 +33,10 @@ export const useSendEmail = ({ data, isSuccess, userName }: IProps) => {
   useEffect(() => {
     if (isSuccess) {
       handleSendEmailRequest(data, userName);
-      navigate("/confirmOTPCode");
+      navigate({
+        pathname: "/confirmOTPCode",
+        search: createSearchParams({ username: userName }).toString(),
+      });
     }
   }, [isSuccess]);
 };
