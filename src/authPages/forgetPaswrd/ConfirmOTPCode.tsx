@@ -3,15 +3,31 @@ import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormInput } from "../../components/UI/FormInput";
+import { useSendEmail } from "../../hooks/useEmail";
+import { useGenerateOtpQuery } from "../../services/auth.api";
 
 import s from "../authStyle.module.scss";
 
 export const ConfirmOTPCode = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [userName, setUserName] = useState("");
+  const [skip, setSkip] = useState(true);
+  const [searchParams] = useSearchParams();
+
+  const { data, isSuccess } = useGenerateOtpQuery(userName, {
+    skip,
+  });
+
+  useSendEmail({ data, isSuccess, userName });
+  // !RE SEND OTP CODE TO USER EMAIL
+  const resendOtpcode = () => {
+    setUserName(searchParams.get("username") || "");
+    setSkip(false);
+  };
 
   const navigate = useNavigate();
 
@@ -67,7 +83,11 @@ export const ConfirmOTPCode = () => {
           </LoadingButton>
           <Typography variant="caption">
             Не получили код?
-            <button className={s.form_link} type="button">
+            <button
+              className={s.form_link}
+              type="button"
+              onClick={resendOtpcode}
+            >
               Отправить код повторно
             </button>
           </Typography>
