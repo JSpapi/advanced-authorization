@@ -25,7 +25,6 @@ export const ConfirmOTPCode = () => {
   });
 
   useSendEmail({ data, isSuccess, userName });
-
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
     setUserName(searchParams.get("username") || "");
@@ -49,11 +48,12 @@ export const ConfirmOTPCode = () => {
 
   const { handleSubmit, reset } = methods;
 
-  // TODO CONFIRM OTP CODE FORM
-  const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
+  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
+    reset();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      console.log(data);
     }, 2000);
     reset();
     // navigate("/resetPassword");
