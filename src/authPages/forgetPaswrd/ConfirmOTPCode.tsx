@@ -16,13 +16,16 @@ export const ConfirmOTPCode = () => {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState("");
   const [skip, setSkip] = useState(true);
+
   const [searchParams] = useSearchParams();
 
+  // !OTP CODE GENERATE REQUEST
   const { data, isSuccess } = useGenerateOtpQuery(userName, {
     skip,
   });
 
   useSendEmail({ data, isSuccess, userName });
+
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
     setUserName(searchParams.get("username") || "");
@@ -46,14 +49,14 @@ export const ConfirmOTPCode = () => {
 
   const { handleSubmit, reset } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
-    reset();
+  // TODO CONFIRM OTP CODE FORM
+  const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      console.log(data);
     }, 2000);
-    navigate("/resetPassword");
+    reset();
+    // navigate("/resetPassword");
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
