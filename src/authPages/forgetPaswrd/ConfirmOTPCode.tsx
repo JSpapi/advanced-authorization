@@ -7,10 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormInput } from "../../components/UI/FormInput";
 import { useSendEmail } from "../../hooks/useEmail";
-import {
-  useGenerateOtpQuery,
-  useVerifyOtpQuery,
-} from "../../services/auth.api";
+import { useGenerateOtpQuery } from "../../services/auth.api";
 
 import s from "../authStyle.module.scss";
 
@@ -18,29 +15,16 @@ export const ConfirmOTPCode = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userName, setUserName] = useState("");
-  const [otpCode, setOtpCode] = useState("");
   const [skip, setSkip] = useState(true);
-  const [skipVerify, setSkipVerify] = useState(true);
 
   const [searchParams] = useSearchParams();
 
-  // !OTP CODE VERIFY REQUEST
-  const { data: message } = useVerifyOtpQuery(
-    { username: searchParams.get("username") || "", code: otpCode },
-    {
-      skip: skipVerify,
-    }
-  );
   // !OTP CODE GENERATE REQUEST
   const { data, isSuccess } = useGenerateOtpQuery(userName, {
     skip,
   });
 
-  console.log("answer: ", message);
-  console.log(skipVerify, searchParams.get("username"));
-
   useSendEmail({ data, isSuccess, userName });
-
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
     setUserName(searchParams.get("username") || "");
@@ -64,14 +48,13 @@ export const ConfirmOTPCode = () => {
 
   const { handleSubmit, reset } = methods;
 
-  // TODO CONFIRM OTP CODE FORM
-  const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
+  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
+    reset();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      console.log(data);
     }, 2000);
-    setOtpCode(userCode.otpCode);
-    setSkipVerify(false);
     reset();
     // navigate("/resetPassword");
   };

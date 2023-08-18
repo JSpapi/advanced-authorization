@@ -5,7 +5,6 @@ import { IOtpCode } from "../types/resetPassword.type";
 export type ResponseLoginData = Omit<IUser, "password"> & { token: string };
 
 type LoginData = Pick<UserData, "email" | "password">;
-type verifyCodeData = Omit<IOtpCode, "email"> & { username: string };
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -43,13 +42,6 @@ export const authApi = api.injectEndpoints({
         params: { username },
       }),
     }),
-    verifyOtp: builder.query<string, verifyCodeData>({
-      query: ({ username, code }) => ({
-        url: "/generateOTP",
-        method: "GET",
-        params: { username, code },
-      }),
-    }),
   }),
 });
 
@@ -59,7 +51,6 @@ export const {
   useLoginMutation,
   useSendEmailMutation,
   useGenerateOtpQuery,
-  useVerifyOtpQuery,
 } = authApi;
 
 export const {
