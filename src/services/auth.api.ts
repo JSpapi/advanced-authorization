@@ -42,6 +42,14 @@ export const authApi = api.injectEndpoints({
         params: { username },
       }),
     }),
+    verifyOtp: builder.query<string, verifyCodeData>({
+      query: ({ username, code }) => ({
+        url: "/verifyOTP",
+        method: "GET",
+        params: { username, code },
+      }),
+    }),
+
   }),
 });
 
