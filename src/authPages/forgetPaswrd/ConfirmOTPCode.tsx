@@ -1,22 +1,25 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { object, string, TypeOf } from "zod";
+import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { FormInput } from "../../components/UI/FormInput";
 import { useSendEmail } from "../../hooks/useEmail";
 import {
   useGenerateOtpQuery,
   useVerifyOtpQuery,
 } from "../../services/auth.api";
+import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 
 import s from "../authStyle.module.scss";
 
 export const ConfirmOTPCode = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [userName, setUserName] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [skip, setSkip] = useState(true);
@@ -25,19 +28,22 @@ export const ConfirmOTPCode = () => {
   const [searchParams] = useSearchParams();
 
   // !OTP CODE VERIFY REQUEST
-  const { data: message } = useVerifyOtpQuery(
+  const {
+    data: message,
+    error,
+    isError,
+    isSuccess: verified,
+  } = useVerifyOtpQuery(
     { username: searchParams.get("username") || "", code: otpCode },
     {
       skip: skipVerify,
     }
   );
+
   // !OTP CODE GENERATE REQUEST
   const { data, isSuccess } = useGenerateOtpQuery(userName, {
     skip,
   });
-
-  console.log("answer: ", message);
-  console.log(skipVerify, searchParams.get("username"));
 
   useSendEmail({ data, isSuccess, userName });
 
@@ -64,7 +70,28 @@ export const ConfirmOTPCode = () => {
 
   const { handleSubmit, reset } = methods;
 
-  // TODO CONFIRM OTP CODE FORM
+  // TODO CHECKING ERROR FROM OTP VERIFICATION
+  useEffect(() => {
+    if (isError) {
+      const maybeError = isErrorWithMessage(error);
+      if (maybeError) setErrorMessage(error.data.message);
+      else setErrorMessage("Не известная ошибка");
+      reset();
+    } else if (verified) {
+      toast("Отп подтвержден!", {
+        position: "top-right",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/resetPassword");
+    }
+  }, [isError, verified]);
+
+  // TODO GET OTP CODE AND MAKE GET REQUEST FORM
   const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
     setLoading(true);
     setTimeout(() => {
@@ -72,8 +99,6 @@ export const ConfirmOTPCode = () => {
     }, 2000);
     setOtpCode(userCode.otpCode);
     setSkipVerify(false);
-    reset();
-    // navigate("/resetPassword");
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
@@ -111,6 +136,7 @@ export const ConfirmOTPCode = () => {
               Отправить код повторно
             </button>
           </Typography>
+          <ErrorMessage message={errorMessage} />
         </form>
       </FormProvider>
     </div>
