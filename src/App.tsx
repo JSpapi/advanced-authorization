@@ -44,7 +44,7 @@ function App() {
               </Route>
             </Routes>
           </Container>
-          <ToastContainer theme="dark" />
+          <ToastContainer theme="dark" autoClose={3000}/>
         </>
       </AuthLoading>
     </ThemeProvider>
