@@ -15,18 +15,16 @@ import {
 } from "../../services/auth.api";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 
+
 import s from "../authStyle.module.scss";
 
 export const ConfirmOTPCode = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [userName, setUserName] = useState("");
-  const [otpCode, setOtpCode] = useState("");
   const [skip, setSkip] = useState(true);
-  const [skipVerify, setSkipVerify] = useState(true);
 
   const [searchParams] = useSearchParams();
-
   // !OTP CODE VERIFY REQUEST
   const {
     data: message,
@@ -40,13 +38,13 @@ export const ConfirmOTPCode = () => {
     }
   );
 
+
   // !OTP CODE GENERATE REQUEST
   const { data, isSuccess } = useGenerateOtpQuery(userName, {
     skip,
   });
 
   useSendEmail({ data, isSuccess, userName });
-
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
     setUserName(searchParams.get("username") || "");
@@ -69,7 +67,6 @@ export const ConfirmOTPCode = () => {
   });
 
   const { handleSubmit, reset } = methods;
-
   // TODO CHECKING ERROR FROM OTP VERIFICATION
   useEffect(() => {
     if (isError) {
@@ -93,10 +90,13 @@ export const ConfirmOTPCode = () => {
 
   // TODO GET OTP CODE AND MAKE GET REQUEST FORM
   const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      console.log(data);
     }, 2000);
+
     setOtpCode(userCode.otpCode);
     setSkipVerify(false);
   };
