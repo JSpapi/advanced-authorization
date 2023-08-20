@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { IEmail, IUser, UserData } from "../types/user.type";
-import { IOtpCode } from "../types/resetPassword.type";
+import { IOtpCode, ISuccessResponse } from "../types/resetPassword.type";
 
 export type ResponseLoginData = Omit<IUser, "password"> & { token: string };
 
@@ -30,7 +30,7 @@ export const authApi = api.injectEndpoints({
         body: emailData,
       }),
     }),
-    resetPassword: builder.mutation<string, resetPasswordData>({
+    resetPassword: builder.mutation<ISuccessResponse, resetPasswordData>({
       query: (resetData) => ({
         url: "/resetPassword",
         method: "PUT",
