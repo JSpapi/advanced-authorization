@@ -9,10 +9,13 @@ import { FormPassword } from "../../components/UI/FormPassword";
 import passwordImg from "../../assets/password.png";
 
 import s from "../authStyle.module.scss";
+import { useResetPasswordMutation } from "../../services/auth.api";
 
 export const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [userName, setUserName] = useState("");
+  const [resetPassword] = useResetPasswordMutation();
 
   const navigate = useNavigate();
 
@@ -38,14 +41,17 @@ export const ResetPassword = () => {
 
   const { handleSubmit, reset } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = (data) => {
-    reset();
+  const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
+    const { password } = data;
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      console.log(data);
     }, 2000);
-    navigate("/login");
+    const res = await resetPassword({ password, username: userName });
+    reset();
+    console.log(res);
+    // navigate("/login");
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
