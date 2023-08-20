@@ -3,18 +3,24 @@ import { LoadingButton } from "@mui/lab";
 import { Avatar, Typography } from "@mui/material";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormPassword } from "../../components/UI/FormPassword";
 import passwordImg from "../../assets/password.png";
 
 import s from "../authStyle.module.scss";
 import { useResetPasswordMutation } from "../../services/auth.api";
+import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
+import { ErrorMessage } from "../../components/UI/ErrorMessage";
+import { toast } from "react-toastify";
 
 export const ResetPassword = () => {
+  // todo GETTING PARAMS
+  const [searchParams] = useSearchParams();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(searchParams.get("username") || "");
   const [resetPassword] = useResetPasswordMutation();
 
   const navigate = useNavigate();
@@ -41,17 +47,33 @@ export const ResetPassword = () => {
 
   const { handleSubmit, reset } = methods;
 
-  const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
-    const { password } = data;
+  const onFormSubmit: SubmitHandler<RegisterInput> = async (newPassword) => {
+    try {
+      const { password } = newPassword;
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    const res = await resetPassword({ password, username: userName });
-    reset();
-    console.log(res);
-    // navigate("/login");
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      await resetPassword({
+        password,
+        username: userName,
+      }).unwrap();
+
+      await toast.promise(resetPassword, {
+        pending: "Ожидаем ответ...",
+        success: "Пароль успешно обновлен 👌",
+        error: "Произошла ошибка 🤯",
+      });
+      reset();
+
+      navigate("/login");
+    } catch (err) {
+      const maybeError = isErrorWithMessage(err);
+      if (maybeError) setError(err.data.message);
+      else setError("Не известная ошибка");
+      reset();
+    }
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
@@ -103,6 +125,7 @@ export const ResetPassword = () => {
               Зарегестрируйтесь
             </Link>
           </Typography>
+          <ErrorMessage message={error} />
         </form>
       </FormProvider>
     </div>

@@ -3,7 +3,11 @@ import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 import { object, string, TypeOf } from "zod";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
@@ -18,13 +22,16 @@ import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import s from "../authStyle.module.scss";
 
 export const ConfirmOTPCode = () => {
+  // todo GETTING PARAMS
+  const [searchParams] = useSearchParams();
+
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(searchParams.get("username") || "");
   const [skip, setSkip] = useState(true);
   const [otpCode, setOtpCode] = useState("");
   const [skipVerify, setSkipVerify] = useState(true);
-  const [searchParams] = useSearchParams();
+
   // !OTP CODE VERIFY REQUEST
   const {
     data: message,
@@ -32,7 +39,7 @@ export const ConfirmOTPCode = () => {
     isError,
     isSuccess: verified,
   } = useVerifyOtpQuery(
-    { username: searchParams.get("username") || "", code: otpCode },
+    { username: userName, code: otpCode },
     {
       skip: skipVerify,
     }
@@ -46,7 +53,6 @@ export const ConfirmOTPCode = () => {
   useSendEmail({ data, isSuccess, userName });
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
-    setUserName(searchParams.get("username") || "");
     setSkip(false);
   };
 
@@ -83,11 +89,16 @@ export const ConfirmOTPCode = () => {
         progress: undefined,
         theme: "dark",
       });
-      navigate("/resetPassword");
+      navigate({
+        pathname: "/resetPassword",
+        search: createSearchParams({
+          username: userName,
+        }).toString(),
+      });
     }
   }, [isError, verified]);
 
-  // TODO GET OTP CODE AND MAKE GET REQUEST FORM
+  // TODO GET INPUT VALUE AND ACTIVATE GENERATE OTP CODE REQUEST
   const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
     setLoading(true);
     setTimeout(() => {
@@ -96,6 +107,7 @@ export const ConfirmOTPCode = () => {
 
     setOtpCode(userCode.otpCode);
     setSkipVerify(false);
+    // setUserName();
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
