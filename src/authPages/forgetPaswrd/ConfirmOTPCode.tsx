@@ -15,7 +15,6 @@ import {
 } from "../../services/auth.api";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 
-
 import s from "../authStyle.module.scss";
 
 export const ConfirmOTPCode = () => {
@@ -23,7 +22,8 @@ export const ConfirmOTPCode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [userName, setUserName] = useState("");
   const [skip, setSkip] = useState(true);
-
+  const [otpCode, setOtpCode] = useState("");
+  const [skipVerify, setSkipVerify] = useState(true);
   const [searchParams] = useSearchParams();
   // !OTP CODE VERIFY REQUEST
   const {
@@ -37,7 +37,6 @@ export const ConfirmOTPCode = () => {
       skip: skipVerify,
     }
   );
-
 
   // !OTP CODE GENERATE REQUEST
   const { data, isSuccess } = useGenerateOtpQuery(userName, {
@@ -91,11 +90,9 @@ export const ConfirmOTPCode = () => {
 
   // TODO GET OTP CODE AND MAKE GET REQUEST FORM
   const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {
-
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      console.log(data);
     }, 2000);
 
     setOtpCode(userCode.otpCode);
