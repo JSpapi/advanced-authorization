@@ -48,8 +48,7 @@ export const ConfirmOTPCode = () => {
   const resendOtpcode = () => {
     setUserName(searchParams.get("username") || "");
     setSkip(false);
-  };  
-  
+  };
 
   const navigate = useNavigate();
 
