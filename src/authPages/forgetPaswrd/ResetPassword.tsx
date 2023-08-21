@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import { Avatar, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { FormPassword } from "../../components/UI/FormPassword";
 import passwordImg from "../../assets/password.png";
-
+import loadingImg from "../../assets/padoru.gif";
 import s from "../authStyle.module.scss";
 import {
   useResetPasswordMutation,
@@ -16,6 +16,7 @@ import {
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { toast } from "react-toastify";
+import { Preloader } from "../../components/preloader/Preloader";
 
 export const ResetPassword = () => {
   // todo GETTING PARAMS
@@ -25,9 +26,13 @@ export const ResetPassword = () => {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState(searchParams.get("username") || "");
   const [resetPassword] = useResetPasswordMutation();
-  const { data } = useRessetSessionQuery();
+  const { isError, isLoading } = useRessetSessionQuery();
 
   const navigate = useNavigate();
+  // !CHECK RESET SESSION IS TRUE
+  useEffect(() => {
+    if (isError) navigate("/confirmEmail");
+  }, [isError]);
 
   const loginSchema = object({
     password: string()
@@ -38,7 +43,7 @@ export const ResetPassword = () => {
     passwordConfirm: string()
       .trim()
       .nonempty("Пожалуйста, подтвердите свой пароль"),
-  }).refine((data) => data.password === data.passwordConfirm, {
+  }).refine((value) => value.password === value.passwordConfirm, {
     path: ["passwordConfirm"],
     message: "Пароли не совпадают",
   });
@@ -79,7 +84,10 @@ export const ResetPassword = () => {
       reset();
     }
   };
-  return (
+
+  return isLoading ? (
+    <Preloader image={loadingImg} />
+  ) : (
     <div className={[s.form, s.login].join(" ")}>
       <Typography variant="h5" className={s.title}>
         Сбросить пароль
