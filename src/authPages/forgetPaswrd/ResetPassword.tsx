@@ -9,7 +9,10 @@ import { FormPassword } from "../../components/UI/FormPassword";
 import passwordImg from "../../assets/password.png";
 
 import s from "../authStyle.module.scss";
-import { useResetPasswordMutation } from "../../services/auth.api";
+import {
+  useResetPasswordMutation,
+  useRessetSessionQuery,
+} from "../../services/auth.api";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { toast } from "react-toastify";
@@ -22,6 +25,7 @@ export const ResetPassword = () => {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState(searchParams.get("username") || "");
   const [resetPassword] = useResetPasswordMutation();
+  const { data } = useRessetSessionQuery();
 
   const navigate = useNavigate();
 
