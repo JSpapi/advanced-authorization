@@ -57,6 +57,12 @@ export const authApi = api.injectEndpoints({
         params: { username, code },
       }),
     }),
+    ressetSession: builder.query<{ flag: boolean }, void>({
+      query: () => ({
+        url: "/createResetSession",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -68,6 +74,7 @@ export const {
   useCurrentQuery,
   useGenerateOtpQuery,
   useVerifyOtpQuery,
+  useRessetSessionQuery,
 } = authApi;
 
 export const {
