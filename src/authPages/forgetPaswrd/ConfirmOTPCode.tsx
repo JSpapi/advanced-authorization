@@ -89,6 +89,7 @@ export const ConfirmOTPCode = () => {
         progress: undefined,
         theme: "dark",
       });
+      
       navigate({
         pathname: "/resetPassword",
         search: createSearchParams({

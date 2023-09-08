@@ -82,7 +82,7 @@ export const ConfirmEmail = () => {
             margin="dense"
             variant="filled"
             sx={{ marginBottom: 1 }}
-            // autoComplete="off"
+            autoComplete="off"
           />
 
           <LoadingButton
