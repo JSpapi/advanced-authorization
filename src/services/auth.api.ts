@@ -43,7 +43,7 @@ export const authApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
-    generateOtp: builder.query<IOtpCode, string>({
+    generateOtp: builder.query<IOtpCode | undefined, string>({
       query: (username) => ({
         url: "/generateOTP",
         method: "GET",
