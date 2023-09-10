@@ -18,11 +18,11 @@ export const ConfirmEmail = () => {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState("");
   const [skip, setSkip] = useState(true);
-  const { data, isSuccess } = useGenerateOtpQuery(userName, {
+  const { data, isSuccess, isError } = useGenerateOtpQuery(userName, {
     skip,
   });
 
-  useSendEmail({ data, isSuccess, userName });
+  useSendEmail({ data, isSuccess, userName, isError });
 
   const loginSchema = object({
     username: string()

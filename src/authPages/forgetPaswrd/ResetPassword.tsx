@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import { Avatar, Typography } from "@mui/material";
@@ -64,19 +66,35 @@ export const ResetPassword = () => {
       setTimeout(() => {
         setLoading(false);
       }, 2000);
+      const id = toast.loading("Please wait...");
+
       await resetPassword({
         password,
         username: userName,
-      }).unwrap();
+      })
+        .unwrap()
+        .then((res) => {
+          toast.update(id, {
+            render: "All is good",
+            type: "success",
+            isLoading: false,
+          });
+          navigate("/login");
+        })
+        .catch((err) => {
+          toast.update(id, {
+            render: "Something went wrong",
+            type: "error",
+            isLoading: false,
+          });
+        });
 
-      await toast.promise(resetPassword, {
-        pending: "Ожидаем ответ...",
-        success: "Пароль успешно обновлен 👌",
-        error: "Произошла ошибка 🤯",
-      });
+      // await toast.promise(resetPassword, {
+      //   pending: "Ожидаем ответ...",
+      //   success: "Пароль успешно обновлен 👌",
+      //   error: "Произошла ошибка 🤯",
+      // });
       reset();
-
-      navigate("/login");
     } catch (err) {
       const maybeError = isErrorWithMessage(err);
       if (maybeError) setError(err.data.message);

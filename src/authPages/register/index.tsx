@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { Avatar, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { object, string, TypeOf } from "zod";
@@ -67,6 +69,7 @@ export const Register = () => {
       setTimeout(() => {
         setLoading(false);
       }, 2000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordConfirm, ...rest } = Object.assign(data, {
         profile: imgFile,
       });
@@ -96,8 +99,8 @@ export const Register = () => {
       reset();
     }
   };
-
-  const uploadImg = async (e: ChangeEvent<HTMLInputElement>) => {
+  // !CAN NOT HANDLE WITH TYPE PROBLEM NULL  AND HAD TO USE ANY HERE, AFTER GETTING  MORE INFO GONNA SOLVE IT
+  const uploadImg = async (e: any) => {
     const base64 = await convertToBase(e.target.files[0]);
 
     setImgFile(base64);
