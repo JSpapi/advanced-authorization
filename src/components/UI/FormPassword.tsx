@@ -38,7 +38,7 @@ export const FormPassword = ({ name, ...otherProps }: Props) => {
           {...otherProps}
           {...field}
           error={!!errors[name]?.message}
-          helperText={errors[name] ? errors[name]?.message : null}
+          helperText={errors[name] ? errors[name]?.message?.toString() : null}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start" sx={{ margin: 0 }}>

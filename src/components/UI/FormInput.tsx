@@ -21,7 +21,7 @@ export const FormInput = ({ name, ...otherProps }: Props) => {
           {...otherProps}
           {...field}
           error={!!errors[name]?.message}
-          helperText={errors[name] ? errors[name]?.message : null}
+          helperText={errors[name] ? errors[name]?.message?.toString() : null}
         />
       )}
     />
