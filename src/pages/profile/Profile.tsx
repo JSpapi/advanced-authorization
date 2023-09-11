@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography } from "@mui/material";
 import s from "./Profile.module.scss";
 import { useAction } from "../../hooks/useActions";
