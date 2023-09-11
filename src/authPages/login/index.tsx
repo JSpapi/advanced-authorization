@@ -44,7 +44,7 @@ export const Login = () => {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 6000);
       await loginUser(data).unwrap();
       reset();
       navigate("/");

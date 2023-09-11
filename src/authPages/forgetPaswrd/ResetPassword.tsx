@@ -67,7 +67,7 @@ export const ResetPassword = () => {
       setTimeout(() => {
         setLoading(false);
       }, 6000);
-      const id = toast.loading("Please wait...");
+      const id = toast.loading("Ждем ответа...");
 
       await resetPassword({
         password,

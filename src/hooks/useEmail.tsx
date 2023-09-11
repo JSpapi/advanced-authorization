@@ -30,7 +30,7 @@ export const useSendEmail = ({
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const text = `ОТП код для восстановления аккаунт ${data?.code}. Никому не показывайте этот код!`;
 
-    const id = toast.loading("Please wait...");
+    const id = toast.loading("Ищем пользователя...");
     await sendEmail({
       username: userName,
       email: data?.email,
