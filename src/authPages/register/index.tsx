@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -19,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
+import { IError } from "../../types/errorMessage.type";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -63,41 +65,77 @@ export const Register = () => {
   const onFormSubmit: SubmitHandler<RegisterInput> = async (data) => {
     // const formData = new FormData();
     // formData.append('picture', data.)
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 6000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordConfirm, ...rest } = Object.assign(data, {
+      profile: imgFile,
+    });
 
-    try {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { passwordConfirm, ...rest } = Object.assign(data, {
-        profile: imgFile,
-      });
-      await registerUser(rest).unwrap();
-      reset();
-      navigate("/");
-
-      await toast.promise(registerUser, {
-        pending: "Ожидаем ответ...",
-        success: "Аккаунт успешно создан 👌",
-        error: "Произошла ошибка 🤯",
-      });
-
-      const { email, username } = data;
-      if (!isLoading) {
-        await sendEmail({ email, username }).unwrap();
-        await toast.promise(sendEmail, {
-          pending: "Ожидаем ответ...",
-          success: "Мы отправили на ваш Email сообщение",
-          error: "Произошла ошибка 🤯",
+    const id = toast.loading("Ждем ответа...");
+    await registerUser(rest)
+      .unwrap()
+      .then((res) => {
+        toast.update(id, {
+          render: "Аккаунт успешно создан 👌",
+          type: "success",
+          isLoading: false,
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
-      }
-    } catch (err) {
-      const maybeError = isErrorWithMessage(err);
-      if (maybeError) setError(err.data.message);
-      else setError("Не известная ошибка");
-      reset();
-    }
+
+        const { email, username } = data;
+        if (!isLoading) {
+          const emailId = toast.loading("Проверяем...");
+
+          sendEmail({ email, username })
+            .unwrap()
+            .then((res) => {
+              toast.update(emailId, {
+                render: "Мы отправили на ваш Email сообщение",
+                type: "success",
+                isLoading: false,
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+            })
+            .catch((err: IError) => {
+              toast.update(emailId, {
+                render: err.data.message,
+                type: "error",
+                isLoading: false,
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+            });
+        }
+
+        navigate("/");
+      })
+      .catch((err: IError) => {
+        toast.update(id, {
+          render: err.data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      });
+    reset();
   };
   // !CAN NOT HANDLE WITH TYPE PROBLEM NULL  AND HAD TO USE ANY HERE, AFTER GETTING  MORE INFO GONNA SOLVE IT
   const uploadImg = async (e: any) => {
