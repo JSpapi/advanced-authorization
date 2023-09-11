@@ -38,8 +38,9 @@ export const ConfirmOTPCode = () => {
   const {
     data: message,
     error,
-    isError,
+    isError: isVerifyError,
     isSuccess: verified,
+    isFetching,
   } = useVerifyOtpQuery(
     { username: userName, code: otpCode },
     {
@@ -48,11 +49,11 @@ export const ConfirmOTPCode = () => {
   );
 
   // !OTP CODE GENERATE REQUEST
-  const { data, isSuccess } = useGenerateOtpQuery(userName, {
+  const { data, isSuccess, isError } = useGenerateOtpQuery(userName, {
     skip,
   });
 
-  useSendEmail({ data, isSuccess, userName });
+  useSendEmail({ data, isSuccess, userName, isError });
   // !RE SEND OTP CODE TO USER EMAIL
   const resendOtpcode = () => {
     setSkip(false);
@@ -74,9 +75,8 @@ export const ConfirmOTPCode = () => {
   });
 
   const { handleSubmit, reset } = methods;
-  // TODO CHECKING ERROR FROM OTP VERIFICATION
   useEffect(() => {
-    if (isError) {
+    if (isVerifyError) {
       const maybeError = isErrorWithMessage(error);
       if (maybeError) setErrorMessage(error.data.message);
       else setErrorMessage("Не известная ошибка");
@@ -91,7 +91,7 @@ export const ConfirmOTPCode = () => {
         progress: undefined,
         theme: "dark",
       });
-      
+
       navigate({
         pathname: "/resetPassword",
         search: createSearchParams({
@@ -99,7 +99,7 @@ export const ConfirmOTPCode = () => {
         }).toString(),
       });
     }
-  }, [isError, verified]);
+  }, [isVerifyError, verified, isFetching]);
 
   // TODO GET INPUT VALUE AND ACTIVATE GENERATE OTP CODE REQUEST
   const onFormSubmit: SubmitHandler<RegisterInput> = (userCode) => {

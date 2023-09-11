@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import { Avatar, Typography } from "@mui/material";
@@ -9,7 +10,7 @@ import { FormInput } from "../../components/UI/FormInput";
 import pswrdImg from "../../assets/password1.png";
 
 import s from "../authStyle.module.scss";
-import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
+// import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { useGenerateOtpQuery } from "../../services/auth.api";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { useSendEmail } from "../../hooks/useEmail";
@@ -41,21 +42,14 @@ export const ConfirmEmail = () => {
   const { handleSubmit, reset } = methods;
 
   const onFormSubmit: SubmitHandler<RegisterInput> = (user) => {
-    try {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
-      reset();
-
-      setUserName(user.username);
-      setSkip(false);
-    } catch (err) {
-      const maybeError = isErrorWithMessage(err);
-      if (maybeError) setError(err.data.message);
-      reset();
-    }
+    setUserName(user.username);
+    setSkip(false);
+    reset();
   };
   return (
     <div className={[s.form, s.login].join(" ")}>

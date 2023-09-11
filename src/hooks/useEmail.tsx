@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { useEffect } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSendEmailMutation } from "../services/auth.api";
 import { IOtpCode } from "../types/resetPassword.type";
-
+import { IError } from "../types/errorMessage.type";
 interface IProps {
   data?: IOtpCode;
   isSuccess: boolean;
@@ -38,30 +40,32 @@ export const useSendEmail = ({
       .unwrap()
       .then((res) => {
         toast.update(id, {
-          render: "All is good",
+          render: "На ваш email был отправлен сообщение",
           type: "success",
           isLoading: false,
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
         navigate({
           pathname: "/confirmOTPCode",
           search: createSearchParams({ username: userName }).toString(),
         });
       })
-      .catch((err) => {
-        console.log(err);
-
+      .catch((err: IError) => {
         toast.update(id, {
-          render: "Something went wrong",
+          render: err.data.message,
           type: "error",
           isLoading: false,
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
       });
-
-    // await toast.promise(sendEmail, {
-    //   pending: "Ожидаем ответ...",
-    //   success: "ОТП код был отправлен на ваш Email",
-    //   error: "Произошла ошибка 🤯",
-    // });
   };
 
   useEffect(() => {

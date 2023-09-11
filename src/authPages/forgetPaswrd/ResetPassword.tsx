@@ -19,6 +19,7 @@ import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { toast } from "react-toastify";
 import { Preloader } from "../../components/preloader/Preloader";
+import { IError } from "../../types/errorMessage.type";
 
 export const ResetPassword = () => {
   // todo GETTING PARAMS
@@ -65,7 +66,7 @@ export const ResetPassword = () => {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 6000);
       const id = toast.loading("Please wait...");
 
       await resetPassword({
@@ -75,25 +76,30 @@ export const ResetPassword = () => {
         .unwrap()
         .then((res) => {
           toast.update(id, {
-            render: "All is good",
+            render: "Пароль обнавлен",
             type: "success",
             isLoading: false,
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
           });
           navigate("/login");
         })
-        .catch((err) => {
+        .catch((err: IError) => {
           toast.update(id, {
-            render: "Something went wrong",
+            render: err.data.message,
             type: "error",
             isLoading: false,
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
           });
         });
 
-      // await toast.promise(resetPassword, {
-      //   pending: "Ожидаем ответ...",
-      //   success: "Пароль успешно обновлен 👌",
-      //   error: "Произошла ошибка 🤯",
-      // });
       reset();
     } catch (err) {
       const maybeError = isErrorWithMessage(err);
