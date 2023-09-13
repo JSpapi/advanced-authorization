@@ -1,16 +1,23 @@
 .login {
-  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+  background-image: linear-gradient(
+    to right,
+    #3d4f79,
+    #39496c,
+    #36445e,
+    #333e51,
+    #313844,
+    #2e353d,
+    #2b3136,
+    #2a2d2f,
+    #272b2c,
+    #242829,
+    #222626,
+    #1f2323
+  );
 }
 
 .register {
-  background-image: linear-gradient(
-    to right bottom,
-    #3078e2,
-    #2868d0,
-    #2059bf,
-    #164aad,
-    #0b3c9c
-  );
+  background: transparent;
 }
 
 .form {
