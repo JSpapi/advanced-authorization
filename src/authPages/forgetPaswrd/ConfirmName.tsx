@@ -10,7 +10,6 @@ import { FormInput } from "../../components/UI/FormInput";
 import pswrdImg from "../../assets/password1.png";
 
 import s from "../authStyle.module.scss";
-// import { isErrorWithMessage } from "../../utils/isErrorWithMessage";
 import { useGenerateOtpQuery } from "../../services/auth.api";
 import { ErrorMessage } from "../../components/UI/ErrorMessage";
 import { useSendEmail } from "../../hooks/useEmail";

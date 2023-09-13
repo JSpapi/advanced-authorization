@@ -110,7 +110,6 @@ export const ConfirmOTPCode = () => {
 
     setOtpCode(userCode.otpCode);
     setSkipVerify(false);
-    // setUserName();
   };
   return (
     <div className={[s.form, s.login].join(" ")}>
